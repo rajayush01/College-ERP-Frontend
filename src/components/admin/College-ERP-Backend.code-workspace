@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../College-ERP-Backend/College-ERP-Backend"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"typescript.autoClosingTags": false
+	}
+}
