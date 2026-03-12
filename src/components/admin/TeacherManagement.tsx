@@ -623,7 +623,7 @@ const handleSubmitTeacher = async () => {
 													e.preventDefault();
 													e.stopPropagation();
 
-													console.log( `${import.meta.env.VITE_API_BASE_URL}${doc.fileUrl}`)
+													console.log( `${import.meta.env.VITE_API_URL}${doc.fileUrl}`)
 
 													setPreviewDocUrl(
 														doc.fileUrl
