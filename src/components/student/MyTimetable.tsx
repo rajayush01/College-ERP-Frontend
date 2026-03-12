@@ -20,7 +20,7 @@ export const MyTimetable: React.FC = () => {
   );
   const [previewDoc, setPreviewDoc] = useState<TimetableDoc | null>(null);
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const getPreviewUrl = (fileUrl: string) => {
   const fullUrl = `${API_BASE_URL}${fileUrl}`;
