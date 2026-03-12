@@ -922,7 +922,7 @@ export const TimetableManagement: React.FC = () => {
       >
         {previewDoc && (
           <iframe
-            src={`${import.meta.env.VITE_API_BASE_URL}${previewDoc.fileUrl}`}
+            src={`${import.meta.env.VITE_API_URL}${previewDoc.fileUrl}`}
             className="w-full h-[70vh] sm:h-[85vh] border rounded-lg"
             title="Timetable Preview"
           />
