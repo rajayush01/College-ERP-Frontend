@@ -4,244 +4,140 @@ import { Button } from "../common/Button";
 import { Select } from "../common/Select";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 import * as teacherApi from "@/api/teacher.api";
-import {
-  Clock,
-  FileText,
-  Download,
-  CalendarDays,
-} from "lucide-react";
+import { Clock, FileText, Download, CalendarDays, Maximize2 } from "lucide-react";
 
-/* ----------------------- INTERFACES ----------------------- */
-
-interface BatchData {
-  _id: string;
-  batchName: string;
-  department: string;
-}
-
-interface Period {
-  periodNumber: number;
-  subject: string;
-  startTime: string;
-  endTime: string;
-  teacher?: {
-    name: string;
-  };
-}
-
-interface DayTimetable {
-  day: string;
-  periods: Period[];
-}
-
+interface BatchData { _id: string; batchName: string; department: string }
+interface Period { periodNumber: number; subject: string; startTime: string; endTime: string }
+interface DayTimetable { day: string; periods: Period[] }
 interface TimetableDocument {
-  _id: string;
-  title: string;
-  fileUrl: string;
-  createdAt: string;
-  batchId: {
-    _id: string;
-    batchName: string;
-  };
+  _id: string; title: string; fileUrl: string; createdAt: string;
+  batchId: { _id: string; batchName: string };
 }
-
-/* ----------------------- CONSTANTS ----------------------- */
 
 const DAY_LABEL: Record<string, string> = {
-  MON: "Monday",
-  TUE: "Tuesday",
-  WED: "Wednesday",
-  THU: "Thursday",
-  FRI: "Friday",
-  SAT: "Saturday",
+  MON: "Monday", TUE: "Tuesday", WED: "Wednesday",
+  THU: "Thursday", FRI: "Friday", SAT: "Saturday",
 };
-
-/* -------------------------------------------------------- */
 
 export const TeacherTimetable: React.FC = () => {
   const [classes, setClasses] = useState<BatchData[]>([]);
   const [selectedClass, setSelectedClass] = useState("");
-
   const [manualTimetable, setManualTimetable] = useState<DayTimetable[]>([]);
   const [pdfDocs, setPdfDocs] = useState<TimetableDocument[]>([]);
-
   const [loading, setLoading] = useState(false);
 
-  /* ------------------ LOAD ASSIGNED BATCHES ------------------ */
   useEffect(() => {
-    console.log("📘 Fetching teacher batches via getAssignedStudents...");
-
-    teacherApi
-      .getAssignedStudents()
-      .then((res) => {
-        console.log("📘 Assigned batches response:", res.data);
-
-        const mapped: BatchData[] = res.data.map((c: {
-          batchId: string;
-          batchName: string;
-          department: string;
-        }) => ({
-          _id: c.batchId,
-          batchName: c.batchName,
-          department: c.department,
-        }));
-
-        setClasses(mapped);
-      })
-      .catch((err) => {
-        console.error("❌ Failed to fetch assigned batches", err);
-      });
+    teacherApi.getAssignedStudents().then((res) => {
+      setClasses(res.data.map((c: any) => ({ _id: c.batchId, batchName: c.batchName, department: c.department })));
+    }).catch(() => {});
   }, []);
 
-  /* ------------------ LOAD TIMETABLE ------------------ */
   useEffect(() => {
     if (!selectedClass) return;
-
-    console.log("🗓️ Loading timetable for class:", selectedClass);
     setLoading(true);
-
     Promise.all([
       teacherApi.getMyBatchTimetable(selectedClass),
       teacherApi.getMyTimetableDocuments(),
-    ])
-      .then(([manualRes, docRes]) => {
-        console.log("📘 Manual timetable:", manualRes.data);
-        console.log("📄 Timetable documents:", docRes.data);
-
-        setManualTimetable(manualRes.data || []);
-
-        const filteredDocs = (docRes.data as TimetableDocument[]).filter(
-          (d) => d.batchId._id === selectedClass
-        );
-
-        console.log("✅ Filtered PDFs:", filteredDocs);
-        setPdfDocs(filteredDocs);
-      })
-      .catch((err) => {
-        console.error("❌ Timetable load failed", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    ]).then(([manualRes, docRes]) => {
+      setManualTimetable(manualRes.data || []);
+      setPdfDocs((docRes.data as TimetableDocument[]).filter((d) => d.batchId._id === selectedClass));
+    }).catch(() => {}).finally(() => setLoading(false));
   }, [selectedClass]);
 
-  /* -------------------------------------------------------- */
-
   return (
-    <div className="space-y-8 p-6 bg-gradient-to-br from-neutral-50 to-indigo-50 min-h-screen">
-
+    <div className="space-y-6 p-4 sm:p-6 bg-gradient-to-br from-neutral-50 to-indigo-50 min-h-screen">
       {/* HEADER */}
       <div className="flex items-center gap-3">
         <CalendarDays size={28} className="text-indigo-600" />
-        <h1 className="text-3xl font-bold text-indigo-700">
-          My Timetable
-        </h1>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-indigo-700">Batch Timetable</h1>
+          <p className="text-neutral-500 text-sm">View timetables for your assigned batches</p>
+        </div>
       </div>
 
-      {/* CLASS SELECT */}
+      {/* BATCH SELECT */}
       <Card>
         <Select
           label="Select Batch"
           value={selectedClass}
           onChange={(e) => setSelectedClass(e.target.value)}
-          options={classes.map((c) => ({
-            value: c._id,
-            label: c.batchName,
-          }))}
+          options={[
+            { value: "", label: "-- Select a Batch --" },
+            ...classes.map((c) => ({ value: c._id, label: c.batchName })),
+          ]}
         />
       </Card>
 
-      {/* LOADER */}
       {loading && <LoadingSpinner />}
 
-      {/* ================= PDF TIMETABLE ================= */}
+      {/* PDF TIMETABLE */}
       {!loading && pdfDocs.length > 0 && (
         <Card className="border-2 border-indigo-200">
-          <h2 className="text-xl font-semibold text-indigo-600 mb-4">
-            📄 Timetable (PDF)
+          <h2 className="text-lg font-semibold text-indigo-600 mb-4 flex items-center gap-2">
+            <FileText size={18} /> PDF Timetable
           </h2>
-
           <div className="grid md:grid-cols-2 gap-6">
             {pdfDocs.map((doc) => (
-              <div
-                key={doc._id}
-                className="border rounded-xl p-4 bg-white shadow-sm"
-              >
-                <div className="flex gap-3 items-start">
-                  <div className="p-3 bg-indigo-100 rounded-lg">
-                    <FileText className="text-indigo-600" />
+              <div key={doc._id} className="border rounded-xl p-4 bg-white shadow-sm space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-indigo-100 rounded-lg shrink-0">
+                    <FileText className="text-indigo-600" size={20} />
                   </div>
-
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{doc.title}</h3>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold truncate">{doc.title}</h3>
                     <p className="text-xs text-neutral-400">
-                      Uploaded on{" "}
-                      {new Date(doc.createdAt).toLocaleDateString()}
+                      Uploaded {new Date(doc.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-
-                {/* PDF PREVIEW */}
-                <div className="mt-4 h-72 border rounded-lg overflow-hidden">
-                  <iframe
-                    src={doc.fileUrl}
-                    className="w-full h-full"
-                    title="Timetable PDF Preview"
-                  />
+                <div className="h-56 border rounded-lg overflow-hidden relative group">
+                  <iframe src={doc.fileUrl} className="w-full h-full" title={doc.title} />
+                  <button
+                    onClick={() => window.open(doc.fileUrl, "_blank")}
+                    className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-lg shadow text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Open fullscreen"
+                  >
+                    <Maximize2 size={16} />
+                  </button>
                 </div>
-
-                <Button
-                  variant="secondary"
-                  className="w-full mt-4"
-                  onClick={() =>
-                    window.open(
-                      doc.fileUrl,
-                      "_blank"
-                    )
-                  }
-                >
-                  <Download size={16} />
-                  Download PDF
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="secondary" className="flex-1 flex items-center justify-center gap-2 text-sm"
+                    onClick={() => window.open(doc.fileUrl, "_blank")}>
+                    <Maximize2 size={14} /> Open Fullscreen
+                  </Button>
+                  <Button variant="secondary" className="flex-1 flex items-center justify-center gap-2 text-sm"
+                    onClick={() => window.open(doc.fileUrl, "_blank")}>
+                    <Download size={14} /> Download
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
         </Card>
       )}
 
-      {/* ================= MANUAL TIMETABLE ================= */}
+      {/* MANUAL TIMETABLE */}
       {!loading && pdfDocs.length === 0 && manualTimetable.length > 0 && (
         <Card className="border-2 border-emerald-200">
-          <h2 className="text-xl font-semibold text-emerald-600 mb-4">
-            🗓️ Manual Timetable
+          <h2 className="text-lg font-semibold text-emerald-600 mb-4 flex items-center gap-2">
+            <CalendarDays size={18} /> Manual Timetable
           </h2>
-
-          <div className="space-y-6">
+          <div className="space-y-5">
             {manualTimetable.map((day) => (
               <div key={day.day}>
-                <h3 className="font-semibold text-lg mb-3 text-neutral-700">
+                <h3 className="font-semibold text-base mb-2 text-neutral-700 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full inline-block" />
                   {DAY_LABEL[day.day]}
                 </h3>
-
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {day.periods.map((p) => (
-                    <div
-                      key={p.periodNumber}
-                      className="flex justify-between items-center p-3 bg-white border rounded-lg shadow-sm"
-                    >
+                    <div key={p.periodNumber}
+                      className="flex justify-between items-center p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow">
                       <div>
-                        <p className="font-semibold">
-                          Period {p.periodNumber} · {p.subject}
-                        </p>
-                        {p.teacher && (
-                          <p className="text-sm text-neutral-500">
-                            {p.teacher.name}
-                          </p>
-                        )}
+                        <p className="font-semibold text-sm">Period {p.periodNumber} · {p.subject}</p>
                       </div>
-
-                      <div className="flex items-center gap-2 text-sm text-neutral-600">
-                        <Clock size={14} />
+                      <div className="flex items-center gap-2 text-sm text-neutral-500 bg-neutral-50 px-3 py-1 rounded-lg">
+                        <Clock size={13} />
                         {p.startTime} – {p.endTime}
                       </div>
                     </div>
@@ -253,15 +149,14 @@ export const TeacherTimetable: React.FC = () => {
         </Card>
       )}
 
-      {/* ================= EMPTY STATE ================= */}
-      {!loading &&
-        selectedClass &&
-        pdfDocs.length === 0 &&
-        manualTimetable.length === 0 && (
-          <Card className="text-center py-12 text-neutral-500">
-            No timetable available for this class
-          </Card>
-        )}
+      {/* EMPTY STATE */}
+      {!loading && selectedClass && pdfDocs.length === 0 && manualTimetable.length === 0 && (
+        <Card className="text-center py-12 text-neutral-500">
+          <CalendarDays className="mx-auto h-12 w-12 text-neutral-300 mb-3" />
+          <p>No timetable available for this batch yet.</p>
+        </Card>
+      )}
+
     </div>
   );
 };

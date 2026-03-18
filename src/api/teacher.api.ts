@@ -140,4 +140,23 @@ export const getMyClassTimetable = getMyBatchTimetable;
 export const getMyTimetableDocuments = () =>
   axios.get(`/teacher/timetable/timetable-documents`);
 
+// Personal (faculty-owned) timetables
+export const getMyPersonalTimetables = () =>
+  axios.get('/teacher/my-timetable');
+
+export const uploadPersonalTimetablePDF = (file: File, title: string) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('title', title);
+  return axios.post('/teacher/my-timetable/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+export const savePersonalTimetableManual = (data: { title: string; schedule: any[] }) =>
+  axios.post('/teacher/my-timetable/manual', data);
+
+export const deletePersonalTimetable = (id: string) =>
+  axios.delete(`/teacher/my-timetable/${id}`);
+
 

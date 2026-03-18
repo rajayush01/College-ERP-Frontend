@@ -104,14 +104,20 @@ export const AttendanceMarking: React.FC = () => {
     }));
 
     const cls = classes.find((c) => c.batchId === selectedClass);
-    if (!cls || !cls.subjectsTaught || cls.subjectsTaught.length === 0) {
-      alert('No subjects assigned to you for this batch');
+    if (!cls) {
+      alert('Batch not found');
+      return;
+    }
+
+    const subject = cls.subjectsTaught?.[0] || '';
+    if (!subject) {
+      alert('No subjects assigned to you for this batch. Please contact admin.');
       return;
     }
 
     console.log('📝 [AttendanceMarking] Submitting attendance:', {
       batchId: selectedClass,
-      subject: cls.subjectsTaught[0],
+      subject,
       date,
       recordsCount: records.length,
     });
@@ -119,7 +125,7 @@ export const AttendanceMarking: React.FC = () => {
     try {
       await teacherApi.markStudentAttendance({
         batchId: selectedClass,
-        subject: cls.subjectsTaught[0],
+        subject,
         date,
         records,
       });

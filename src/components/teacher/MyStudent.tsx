@@ -128,54 +128,65 @@ const StudentModal = ({
   onClose: () => void;
 }) => {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[100]">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6 relative animate-scale-in">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-800"
-        >
-          <X />
-        </button>
-
-        <h2 className="text-2xl font-bold mb-4">
-          Student Details
-        </h2>
-
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          <Info label="Student ID" value={student.studentId} />
-          <Info label="Name" value={student.name} />
-          <Info label="Enrollment Number" value={student.enrollmentNumber} />
-          <Info label="Department" value={student.department} />
-          <Info label="Program" value={student.program} />
-          <Info label="Semester" value={student.semester} />
-
-          <Info label="Father Name" value={student.fatherName} />
-          <Info label="Mother Name" value={student.motherName} />
-
-          <Info
-            label="Parent Email"
-            value={student.parentsEmail || '—'}
-          />
-          <Info
-            label="Phone"
-            value={student.phoneNumbers?.[0] || '—'}
-          />
-
-          <Info label="Blood Group" value={student.bloodGroup} />
-          <Info label="Caste" value={student.caste} />
-
-          <Info
-            label="DOB"
-            value={new Date(student.dob).toLocaleDateString()}
-          />
-          <Info
-            label="Joined Date"
-            value={new Date(student.joinedDate).toLocaleDateString()}
-          />
-
-          <div className="md:col-span-2">
-            <Info label="Address" value={student.address} />
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[calc(100vh-3rem)] animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header — fixed */}
+        <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
+          <div>
+            <h2 className="text-xl font-bold text-neutral-800">Student Details</h2>
+            <p className="text-sm text-neutral-500">{student.name} · {student.studentId}</p>
           </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Body — scrollable */}
+        <div className="overflow-y-auto px-6 py-5 flex-1">
+          <div className="grid sm:grid-cols-2 gap-3 text-sm">
+            <Info label="Student ID" value={student.studentId} />
+            <Info label="Enrollment Number" value={student.enrollmentNumber} />
+            <Info label="Name" value={student.name} />
+            <Info label="Department" value={student.department} />
+            <Info label="Program" value={student.program} />
+            <Info label="Semester" value={student.semester} />
+            <Info label="Father Name" value={student.fatherName || '—'} />
+            <Info label="Mother Name" value={student.motherName || '—'} />
+            <Info label="Parent Email" value={student.parentsEmail || '—'} />
+            <Info label="Phone" value={student.phoneNumbers?.[0] || '—'} />
+            <Info label="Blood Group" value={student.bloodGroup || '—'} />
+            <Info label="Caste" value={student.caste || '—'} />
+            <Info
+              label="Date of Birth"
+              value={student.dob ? new Date(student.dob).toLocaleDateString() : '—'}
+            />
+            <Info
+              label="Joined Date"
+              value={student.joinedDate ? new Date(student.joinedDate).toLocaleDateString() : '—'}
+            />
+            <div className="sm:col-span-2">
+              <Info label="Address" value={student.address || '—'} />
+            </div>
+          </div>
+        </div>
+
+        {/* Footer — fixed */}
+        <div className="px-6 py-4 border-t shrink-0 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 font-medium text-sm transition-colors"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
