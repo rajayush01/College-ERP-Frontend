@@ -160,3 +160,7 @@ export const deletePersonalTimetable = (id: string) =>
   axios.delete(`/teacher/my-timetable/${id}`);
 
 
+
+// My Faculty Attendance (own records)
+export const getMyFacultyAttendance = () =>
+  axios.get('/teacher/my-attendance');

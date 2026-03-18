@@ -23,6 +23,7 @@ import { SharedDocuments } from '@/components/teacher/SharedDocuments';
 import { TeacherTimetable } from '@/components/teacher/TeacherTimetable';
 import { TeacherMessage } from '@/components/teacher/TeacherMessage';
 import { MyTimetableUpload } from '@/components/teacher/MyTimetableUpload';
+import { MyAttendance } from '@/components/teacher/MyAttendance';
 
 import { LayoutDashboard, User, Users, Calendar, BookOpen, ClipboardList, Briefcase, Bell, Send, CalendarDays } from 'lucide-react';
 
@@ -43,6 +44,7 @@ export const TeacherRoutes: React.FC = () => {
 		{ path: '/teacher/shared-documents', label: 'Documents', icon: <Send size={20} /> },
 		{ path: '/teacher/timetable', label: 'Batch Timetable', icon: <Send size={20} /> },
 		{ path: '/teacher/my-timetable', label: 'My Timetable', icon: <CalendarDays size={20} /> },
+		{ path: '/teacher/my-attendance', label: 'My Attendance', icon: <CalendarDays size={20} /> },
 		{
 			path: '/teacher/message-students',
 			label: 'Message Students',
@@ -76,7 +78,8 @@ export const TeacherRoutes: React.FC = () => {
 						<Route path="/ExamList" element={<ExamList />} />
 						<Route path="/shared-documents" element={<SharedDocuments />} />
 						<Route path="/timetable" element={<TeacherTimetable />} />
-					    <Route path="/my-timetable" element={<MyTimetableUpload />} />
+						<Route path="/my-timetable" element={<MyTimetableUpload />} />
+				    <Route path="/my-attendance" element={<MyAttendance />} />
 					    <Route path="/message-students" element={<TeacherMessage />} />
 					</Routes>
 				</main>

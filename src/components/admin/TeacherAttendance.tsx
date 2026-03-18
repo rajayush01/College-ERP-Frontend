@@ -29,6 +29,7 @@ type AttendanceReportRow = {
   teacherId: string;
   name: string;
   status: "PRESENT" | "ABSENT" | "LEAVE";
+  markedAt: string | null;
 };
 
 /* =========================
@@ -261,6 +262,7 @@ const fetchAttendanceReport = async () => {
                     <th className="p-2 sm:p-3 text-left text-xs sm:text-sm">Faculty</th>
                     <th className="p-2 sm:p-3 text-left text-xs sm:text-sm">Faculty ID</th>
                     <th className="p-2 sm:p-3 text-left text-xs sm:text-sm">Status</th>
+                    <th className="p-2 sm:p-3 text-left text-xs sm:text-sm">Marked At</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -278,6 +280,11 @@ const fetchAttendanceReport = async () => {
                         }`}>
                           {r.status}
                         </span>
+                      </td>
+                      <td className="p-2 sm:p-3 text-xs sm:text-sm text-neutral-500">
+                        {r.markedAt
+                          ? new Date(r.markedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                          : "—"}
                       </td>
                     </tr>
                   ))}
