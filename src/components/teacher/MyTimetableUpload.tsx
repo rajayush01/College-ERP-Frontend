@@ -4,7 +4,7 @@ import { Button } from '../common/Button';
 import { Input } from '../common/Input';
 import { Select } from '../common/Select';
 import * as teacherApi from '@/api/teacher.api';
-import { Plus, Trash2, Upload, CalendarDays, FileText, Maximize2 } from 'lucide-react';
+import { Plus, Trash2, Upload, CalendarDays, FileText, Maximize2, X } from 'lucide-react';
 import { DAYS } from '@/utils/constants';
 
 const DAY_LABEL: Record<string, string> = {
