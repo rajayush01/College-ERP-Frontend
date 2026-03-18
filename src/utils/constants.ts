@@ -72,6 +72,17 @@ export const DEPARTMENTS = [
 
 export const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 
+export const CASTES = [
+  { value: 'General', label: 'General' },
+  { value: 'OBC', label: 'OBC (Other Backward Class)' },
+  { value: 'SC', label: 'SC (Scheduled Caste)' },
+  { value: 'ST', label: 'ST (Scheduled Tribe)' },
+  { value: 'EWS', label: 'EWS (Economically Weaker Section)' },
+  { value: 'NT', label: 'NT (Nomadic Tribe)' },
+  { value: 'SBC', label: 'SBC (Special Backward Class)' },
+  { value: 'VJ', label: 'VJ (Vimukta Jati)' },
+];
+
 export const DESIGNATIONS = [
   { value: 'Professor', label: 'Professor' },
   { value: 'Associate Professor', label: 'Associate Professor' },

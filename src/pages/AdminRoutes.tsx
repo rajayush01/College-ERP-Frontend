@@ -15,6 +15,7 @@ import { RequestManagement } from '@/components/admin/RequestManagement';
 import { DocumentManagement } from '@/components/admin/DocumentManagement';
 import { NotificationSender } from '@/components/admin/NotificationSender';
 import { TeacherAttendance } from '@/components/admin/TeacherAttendance';
+import { SubjectManagement } from '@/components/admin/SubjectManagement';
 import {
   LayoutDashboard,
   Users,
@@ -47,6 +48,7 @@ export const AdminRoutes: React.FC = () => {
     { path: '/admin/documents', label: 'Documents', icon: <FileText size={20} /> },
     { path: '/admin/notifications', label: 'Notifications', icon: <Bell size={20} /> },
     { path: '/admin/teacher-attendance', label: 'Faculty Attendance', icon: <UserCheck size={20} /> },
+    { path: '/admin/subjects', label: 'Subjects', icon: <BookOpen size={20} /> },
   ];
 
   return (
@@ -71,6 +73,7 @@ export const AdminRoutes: React.FC = () => {
             <Route path="/documents" element={<DocumentManagement />} />
             <Route path="/notifications" element={<NotificationSender />} />
             <Route path="/teacher-attendance" element={<TeacherAttendance />} />
+            <Route path="/subjects" element={<SubjectManagement />} />
           </Routes>
         </main>
       </div>

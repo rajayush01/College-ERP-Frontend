@@ -372,3 +372,13 @@ export const assignClassTeacher = (classId: string, teacherId: string) =>
 
 export const assignSubjectTeacher = (classId: string, subject: string, teacherId: string) =>
   axios.post('/admin/classes/assign-subject-teacher', { classId, subject, teacherId });
+
+// Subject Management APIs
+export const getAllSubjects = () =>
+  axios.get('/admin/subjects');
+
+export const createSubject = (data: { name: string; code: string; department?: string; program?: string; semester?: number }) =>
+  axios.post('/admin/subjects', data);
+
+export const deleteSubject = (id: string) =>
+  axios.delete(`/admin/subjects/${id}`);

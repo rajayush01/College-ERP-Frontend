@@ -24,12 +24,19 @@ type FacultyType = {
   teacherId: string;
 };
 
+type SubjectType = {
+  _id: string;
+  name: string;
+  code: string;
+};
+
 export const BatchManagement: React.FC = () => {
   /* =========================
      STATE
   ========================= */
   const [batches, setBatches] = useState<BatchType[]>([]);
   const [faculty, setFaculty] = useState<FacultyType[]>([]);
+  const [subjects, setSubjects] = useState<SubjectType[]>([]);
 
   const [batchData, setBatchData] = useState({
     batchName: "",
@@ -56,13 +63,15 @@ export const BatchManagement: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [batchRes, facultyRes] = await Promise.all([
+        const [batchRes, facultyRes, subjectRes] = await Promise.all([
           adminApi.getAllBatches(),
-          adminApi.getTeachersForDropdown()
+          adminApi.getTeachersForDropdown(),
+          adminApi.getAllSubjects(),
         ]);
 
         setBatches(batchRes.data);
         setFaculty(facultyRes.data);
+        setSubjects(subjectRes.data);
       } catch {
         alert("Failed to load batches or faculty");
       }
@@ -274,7 +283,7 @@ export const BatchManagement: React.FC = () => {
               ))}
             </select>
 
-            <Input
+            <Select
               label="Subject"
               value={subjectFacultyData.subject}
               onChange={(e) =>
@@ -283,6 +292,10 @@ export const BatchManagement: React.FC = () => {
                   subject: e.target.value
                 })
               }
+              options={[
+                { value: '', label: '-- Select Subject --' },
+                ...subjects.map((s) => ({ value: s.name, label: `${s.name} (${s.code})` })),
+              ]}
               required
             />
 

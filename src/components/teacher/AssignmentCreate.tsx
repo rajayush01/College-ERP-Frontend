@@ -6,6 +6,7 @@ import { Select } from '../common/Select';
 import { DatePicker } from '../common/DatePicker';
 import { MultiFileUpload } from '../common/MultiFileUpload';
 import * as teacherApi from '@/api/teacher.api';
+import * as adminApi from '@/api/admin.api';
 import { useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 
@@ -27,6 +28,7 @@ interface FormData {
 export const AssignmentCreate: React.FC = () => {
   const navigate = useNavigate();
   const [classes, setClasses] = useState<BatchData[]>([]);
+  const [allSubjects, setAllSubjects] = useState<{ name: string; code: string }[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
@@ -40,6 +42,7 @@ export const AssignmentCreate: React.FC = () => {
 
   useEffect(() => {
     fetchClasses();
+    adminApi.getAllSubjects().then((res) => setAllSubjects(res.data)).catch(() => {});
   }, []);
 
   const fetchClasses = async () => {
@@ -95,7 +98,7 @@ export const AssignmentCreate: React.FC = () => {
     }
 
     if (!formData.subject.trim()) {
-      alert('Please enter a subject name');
+      alert('Please select a subject');
       return;
     }
 
@@ -164,13 +167,13 @@ export const AssignmentCreate: React.FC = () => {
               label="Batch"
               value={formData.batchId}
               onChange={(e) => {
-                console.log('🎯 [AssignmentCreate] Batch selected:', e.target.value);
                 const selectedBatch = classes.find(c => c.batchId === e.target.value);
-                console.log('📦 [AssignmentCreate] Selected batch:', selectedBatch);
                 setFormData({ 
                   ...formData, 
                   batchId: e.target.value,
+                  subject: '',
                 });
+                console.log('📦 [AssignmentCreate] Selected batch:', selectedBatch);
               }}
               options={classes.map((cls) => ({
                 value: cls.batchId,
@@ -179,18 +182,21 @@ export const AssignmentCreate: React.FC = () => {
               required
             />
 
-            <Input
-              label="Subject"
-              value={formData.subject}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  subject: e.target.value,
-                })
-              }
-              placeholder="Enter subject name"
-              required
-            />
+            {(() => {
+              const selectedBatch = classes.find(c => c.batchId === formData.batchId);
+              const subjectOptions = selectedBatch?.subjectsTaught?.length
+                ? selectedBatch.subjectsTaught.map((s) => ({ value: s, label: s }))
+                : allSubjects.map((s) => ({ value: s.name, label: `${s.name} (${s.code})` }));
+              return (
+                <Select
+                  label="Subject"
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  options={[{ value: '', label: '-- Select Subject --' }, ...subjectOptions]}
+                  required
+                />
+              );
+            })()}
           </div>
 
           <DatePicker

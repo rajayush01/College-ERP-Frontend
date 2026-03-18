@@ -10,7 +10,7 @@ import { DocumentUpload } from '../common/DocumentUpload';
 import { PhotoUpload } from '../common/PhotoUpload';
 import * as adminApi from '@/api/admin.api';
 import { Plus, Eye, Pencil } from 'lucide-react';
-import { BLOOD_GROUPS, DEPARTMENTS, PROGRAMS, SEMESTERS } from '@/utils/constants';
+import { BLOOD_GROUPS, DEPARTMENTS, PROGRAMS, SEMESTERS, CASTES } from '@/utils/constants';
 
 /* =========================
    UI FORM TYPE
@@ -407,10 +407,11 @@ export const StudentManagement: React.FC = () => {
 						options={BLOOD_GROUPS}
 					/>
 
-					<Input
+					<Select
 						label="Caste"
 						value={formData.caste}
 						onChange={(e) => setFormData({ ...formData, caste: e.target.value })}
+						options={CASTES}
 					/>
 					
 					<Input
